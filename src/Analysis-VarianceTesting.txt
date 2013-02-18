@@ -1,0 +1,1638 @@
+# Run this code to load libraries
+library("devtools", lib.loc="C:/Users/EBI-Dev/Documents/R/win-library/2.15")
+library("evaluate", lib.loc="C:/Users/EBI-Dev/Documents/R/win-library/2.15")
+library("ggplot2", lib.loc="C:/Users/EBI-Dev/Documents/R/win-library/2.15")
+library("KernSmooth", lib.loc="C:/Program Files/R/R-2.15.2/library")
+library("lattice", lib.loc="C:/Program Files/R/R-2.15.2/library")
+library("MASS", lib.loc="C:/Program Files/R/R-2.15.2/library")
+library("PerformanceAnalytics", lib.loc="C:/Users/EBI-Dev/Documents/R/win-library/2.15")
+library("plyr", lib.loc="C:/Users/EBI-Dev/Documents/R/win-library/2.15")
+library("reshape", lib.loc="C:/Users/EBI-Dev/Documents/R/win-library/2.15")
+library("reshape2", lib.loc="C:/Users/EBI-Dev/Documents/R/win-library/2.15")
+
+
+# loansModSubsets 
+# what you would expect re: FICO and interest rates
+LowFICOHiInt <- loansModSubsetLowFICOHiInt
+HiFICOLowInt <- loansModSubsetHiFICOLowInt
+
+# counter intuitive re: FICO and interest rates
+HiFICOHiInt <- loansModSubsetHiFICOHiInt
+LowFICOLowInt <- loansModSubsetLowFICOLowInt
+
+# Values to explore thru ANOVA?
+Loan.Length (or LoanLength)
+Loan.Purpose == debt_consolidation (or LoanPurposeRank)  # NOTE: May not be relevant
+Home.Ownership == MORTGAGE | Home.Ownership ==  RENT (or     
+InquiresRank == A (or Inquiries.in.the.Last.6.Months)
+
+#histograms to run NOTE: Modify the length of the file name before running final graphs
+
+hist(x=LowFICOHiInt$LoanLength,axes=TRUE)
+hist(x=HiFICOLowInt$LoanLength,axes=TRUE)
+hist(x=HiFICOHiInt$LoanLength,axes=TRUE)
+hist(x=LowFICOLowInt$LoanLength,axes=TRUE)
+
+hist(x=LowFICOHiInt$LoanPurposeRank,axes=TRUE)
+hist(x=HiFICOLowInt$LoanPurposeRank,axes=TRUE)
+hist(x=HiFICOHiInt$LoanPurposeRank,axes=TRUE)
+hist(x=LowFICOLowInt$LoanPurposeRank,axes=TRUE)
+
+hist(x=LowFICOHiInt$HomeOwner,axes=TRUE)
+hist(x=HiFICOLowInt$HomeOwner,axes=TRUE)
+hist(x=HiFICOHiInt$HomeOwner,axes=TRUE)
+hist(x=LowFICOLowInt$HomeOwner,axes=TRUE)
+
+hist(x=LowFICOHiInt$Inquiries.in.the.Last.6.Months,axes=TRUE)
+hist(x=HiFICOLowInt$Inquiries.in.the.Last.6.Months,axes=TRUE)
+hist(x=HiFICOHiInt$Inquiries.in.the.Last.6.Months,axes=TRUE)
+hist(x=LowFICOLowInt$Inquiries.in.the.Last.6.Months,axes=TRUE)
+
+# box plots to run
+
+boxplot(LowFICOLowInt$Inquiries.in.the.Last.6.Months,LowFICOLowInt$LoanPurposeRank, col="blue",varwidth=TRUE)
+boxplot(HiFICOLowInt$Inquiries.in.the.Last.6.Months,HiFICOLowInt$LoanPurposeRank, col="blue",varwidth=TRUE)
+boxplot(HiFICOHiInt$Inquiries.in.the.Last.6.Months,HiFICOHiInt$LoanPurposeRank, col="blue",varwidth=TRUE)
+boxplot(LowFICOHiInt$Inquiries.in.the.Last.6.Months,LowFICOHiInt$LoanPurposeRank, col="blue",varwidth=TRUE)
+
+# NOTE: this one is really good
+boxplot(LowFICOLowInt$Inquiries.in.the.Last.6.Months,HiFICOLowInt$Inquiries.in.the.Last.6.Months,HiFICOHiInt$Inquiries.in.the.Last.6.Months,LowFICOHiInt$Inquiries.in.the.Last.6.Months, col="blue",varwidth=TRUE)
+
+boxplot(LowFICOLowInt$LoanPurposeRank,HiFICOLowInt$LoanPurposeRank,HiFICOHiInt$LoanPurposeRank,LowFICOHiInt$LoanPurposeRank, col="blue",varwidth=TRUE)
+
+boxplot(LowFICOLowInt$LoanLength,HiFICOLowInt$LoanLength,HiFICOHiInt$LoanLength,LowFICOHiInt$LoanLength, col="blue",varwidth=TRUE)
+
+ main="LowFICOLowInt"
+qplot(data=LowFICOLowInt,x=Inquiries.in.the.Last.6.Months,y=IntRatePrim,geom="boxplot",main="LowFICOLowInt")
+qplot(data=HiFICOLowInt,x=Inquiries.in.the.Last.6.Months,y=IntRatePrim,geom="boxplot",main="HiFICOLowInt")
+qplot(data=HiFICOHiInt,x=Inquiries.in.the.Last.6.Months,y=IntRatePrim,geom="boxplot",main="HiFICOHiInt")
+qplot(data=LowFICOHiInt,x=Inquiries.in.the.Last.6.Months,y=IntRatePrim,geom="boxplot",main="LowFICOHiInt")
+
+# density plots
+
+# NOTE: these are good
+dens <- density(LowFICOLowInt$Inquiries.in.the.Last.6.Months, na.rm=TRUE)
+dens <- density(HiFICOLowInt$Inquiries.in.the.Last.6.Months, na.rm=TRUE)
+dens <- density(HiFICOHiInt$Inquiries.in.the.Last.6.Months, na.rm=TRUE)
+dens <- density(LowFICOHiInt$Inquiries.in.the.Last.6.Months, na.rm=TRUE)
+plot(dens,lwd=3,col="blue")
+
+dens <- density(LowFICOLowInt$LoanPurposeRank, na.rm=TRUE)
+dens <- density(HiFICOLowInt$LoanPurposeRank, na.rm=TRUE)
+dens <- density(HiFICOHiInt$LoanPurposeRank, na.rm=TRUE)
+dens <- density(LowFICOHiInt$LoanPurposeRank, na.rm=TRUE)
+plot(dens,lwd=3,col="blue")
+
+# scatter plots # NOTE: these are good
+qplot(data=loansMod,x=Inquiries.in.the.Last.6.Months,y=IntRatePrim,color=LoanLength,main="All loans data")
+qplot(data=LowFICOLowInt,x=Inquiries.in.the.Last.6.Months,y=IntRatePrim,color=LoanLength,main="Low FICO score Low Interest Rate")
+qplot(data=HiFICOLowInt,x=Inquiries.in.the.Last.6.Months,y=IntRatePrim,color=LoanLength,main="High FICO score Low Interest Rate")
+qplot(data=HiFICOHiInt,x=Inquiries.in.the.Last.6.Months,y=IntRatePrim,color=LoanLength,main="High FICO score High Interest Rate")
+qplot(data=LowFICOHiInt,x=Inquiries.in.the.Last.6.Months,y=IntRatePrim,color=LoanLength,main="Low FICO score High Interest Rate")
+
+qplot(data=LowFICOLowInt,x=Inquiries.in.the.Last.6.Months,y=IntRatePrim,log="xy",color=LoanLength)
+
+# lattice plots - bar chart for each of the factor spread by the interest rate
+histogram(~ IntRatePrim | factor(Inquiries.in.the.Last.6.Months), data=LowFICOLowInt,main="LowFICOLowInt - Inquiries.in.the.Last.6.Months")
+histogram(~ IntRatePrim | factor(Inquiries.in.the.Last.6.Months), data=HiFICOLowInt,main="HiFICOLowInt - Inquiries.in.the.Last.6.Months")
+histogram(~ IntRatePrim | factor(Inquiries.in.the.Last.6.Months), data=HiFICOHiInt,main="HiFICOHiInt - Inquiries.in.the.Last.6.Months")
+histogram(~ IntRatePrim | factor(Inquiries.in.the.Last.6.Months), data=LowFICOHiInt,main="LowFICOHiInt - Inquiries.in.the.Last.6.Months")
+
+
+# Linear Models
+
+
+# Test InquiresRank A
+lmBoth <- lm(loansMod$IntRatePrim  ~ loansMod$FICOBeg + loansMod$InquiresRank )
+plot(loansMod$FICOBeg,loansMod$IntRatePrim,pch=19, main="InquiresRank A")
+points(loansMod$FICOBeg,loansMod$IntRatePrim,pch=19,col=((loansMod$InquiresRank =="A")*1+1))
+abline(c(lmBoth$coeff[1],lmBoth$coeff[2]),col="red",lwd=3)
+abline(c(lmBoth$coeff[1] + lmBoth$coeff[3],lmBoth$coeff[2] ),col="black",lwd=3)
+# Test InquiresRank B
+lmBoth <- lm(loansMod$IntRatePrim  ~ loansMod$FICOBeg + loansMod$InquiresRank )
+plot(loansMod$FICOBeg,loansMod$IntRatePrim,pch=19, main="InquiresRank B")
+points(loansMod$FICOBeg,loansMod$IntRatePrim,pch=19,col=((loansMod$InquiresRank =="B")*1+1))
+abline(c(lmBoth$coeff[1],lmBoth$coeff[2]),col="red",lwd=3)
+abline(c(lmBoth$coeff[1] + lmBoth$coeff[3],lmBoth$coeff[2] ),col="black",lwd=3)
+# Test InquiresRank C
+lmBoth <- lm(loansMod$IntRatePrim  ~ loansMod$FICOBeg + loansMod$InquiresRank )
+plot(loansMod$FICOBeg,loansMod$IntRatePrim,pch=19, main="InquiresRank C")
+points(loansMod$FICOBeg,loansMod$IntRatePrim,pch=19,col=((loansMod$InquiresRank =="C")*1+1))
+abline(c(lmBoth$coeff[1],lmBoth$coeff[2]),col="red",lwd=3)
+abline(c(lmBoth$coeff[1] + lmBoth$coeff[3],lmBoth$coeff[2] ),col="black",lwd=3)
+# Test InquiresRank Z
+lmBoth <- lm(loansMod$IntRatePrim  ~ loansMod$FICOBeg + loansMod$InquiresRank )
+plot(loansMod$FICOBeg,loansMod$IntRatePrim,pch=19, main="InquiresRank Z")
+points(loansMod$FICOBeg,loansMod$IntRatePrim,pch=19,col=((loansMod$InquiresRank =="Z")*1+1))
+abline(c(lmBoth$coeff[1],lmBoth$coeff[2]),col="red",lwd=3)
+abline(c(lmBoth$coeff[1] + lmBoth$coeff[3],lmBoth$coeff[2] ),col="black",lwd=3)
+
+# Test FICO to Interest Rate
+plot(loansMod$FICOBeg,loansMod$IntRatePrim,pch=19,col="blue", main="Interest Rate to FICO Score")
+lm1 <- lm(loansMod$IntRatePrim ~ loansMod$FICOBeg)
+lines(loansMod$FICOBeg,lm1$fitted,col="red",lwd=3)
+
+plot(LowFICOLowInt$FICOBeg,LowFICOLowInt$IntRatePrim,pch=19,col="blue", main="Interest Rate to FICO Score - LowFICOLowInt")
+lm2 <- lm(LowFICOLowInt$IntRatePrim ~ LowFICOLowInt$FICOBeg)
+lines(LowFICOLowInt$FICOBeg,lm2$fitted,col="red",lwd=3)
+
+plot(HiFICOLowInt$FICOBeg,HiFICOLowInt$IntRatePrim,pch=19,col="blue", main="Interest Rate to FICO Score - HiFICOLowInt")
+lm3 <- lm(HiFICOLowInt$IntRatePrim ~ HiFICOLowInt$FICOBeg)
+lines(HiFICOLowInt$FICOBeg,lm3$fitted,col="red",lwd=3)
+
+plot(HiFICOHiInt$FICOBeg,HiFICOHiInt$IntRatePrim,pch=19,col="blue", main="Interest Rate to FICO Score - HiFICOHiInt")
+lm4 <- lm(HiFICOHiInt$IntRatePrim ~ HiFICOHiInt$FICOBeg)
+lines(HiFICOHiInt$FICOBeg,lm4$fitted,col="red",lwd=3)
+
+plot(LowFICOHiInt$FICOBeg, LowFICOHiInt$IntRatePrim,pch=19,col="blue", main="Interest Rate to FICO Score - LowFICOHiInt")
+lm5 <- lm(LowFICOHiInt$IntRatePrim ~ LowFICOHiInt$FICOBeg)
+lines(LowFICOHiInt$FICOBeg,lm5$fitted,col="red",lwd=3)
+
+lm1
+lm2
+lm3
+lm4
+
+> lm1
+
+Call:
+lm(formula = loansMod$IntRatePrim ~ loansMod$FICOBeg)
+
+Coefficients:
+     (Intercept)  loansMod$FICOBeg  
+         72.9961           -0.0856  
+
+> lm2
+
+Call:
+lm(formula = LowFICOLowInt$IntRatePrim ~ LowFICOLowInt$FICOBeg)
+
+Coefficients:
+          (Intercept)  LowFICOLowInt$FICOBeg  
+             40.37431               -0.04256  
+
+> lm3
+
+Call:
+lm(formula = HiFICOLowInt$IntRatePrim ~ HiFICOLowInt$FICOBeg)
+
+Coefficients:
+         (Intercept)  HiFICOLowInt$FICOBeg  
+            30.22684              -0.02953  
+
+> lm4
+
+Call:
+lm(formula = HiFICOHiInt$IntRatePrim ~ HiFICOHiInt$FICOBeg)
+
+Coefficients:
+        (Intercept)  HiFICOHiInt$FICOBeg  
+           33.61957             -0.02629  
+
+> summary(lm1)
+
+Call:
+lm(formula = loansMod$IntRatePrim ~ loansMod$FICOBeg)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-7.5036 -2.0756 -0.3636  1.7804  9.9244 
+
+Coefficients:
+                  Estimate Std. Error t value Pr(>|t|)    
+(Intercept)      72.996078   1.195838   61.04   <2e-16 ***
+loansMod$FICOBeg -0.085601   0.001692  -50.59   <2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+Residual standard error: 2.963 on 2498 degrees of freedom
+Multiple R-squared: 0.5061,	Adjusted R-squared: 0.5059 
+F-statistic:  2559 on 1 and 2498 DF,  p-value: < 2.2e-16 
+
+> confint(lm1)
+                       2.5 %      97.5 %
+(Intercept)      70.65114141 75.34101418
+loansMod$FICOBeg -0.08891854 -0.08228277
+> 
+> summary(lm2)
+
+Call:
+lm(formula = LowFICOLowInt$IntRatePrim ~ LowFICOLowInt$FICOBeg)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-4.7955 -0.5827  0.2045  0.9917  1.6301 
+
+Coefficients:
+                       Estimate Std. Error t value Pr(>|t|)    
+(Intercept)           40.374315   4.177237   9.665  < 2e-16 ***
+LowFICOLowInt$FICOBeg -0.042559   0.006029  -7.059 8.73e-12 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+Residual standard error: 1.256 on 358 degrees of freedom
+Multiple R-squared: 0.1222,	Adjusted R-squared: 0.1197 
+F-statistic: 49.84 on 1 and 358 DF,  p-value: 8.729e-12 
+
+> confint(lm2)
+                            2.5 %      97.5 %
+(Intercept)           32.15930718 48.58932205
+LowFICOLowInt$FICOBeg -0.05441556 -0.03070335
+> 
+> summary(lm3)
+
+Call:
+lm(formula = HiFICOLowInt$IntRatePrim ~ HiFICOLowInt$FICOBeg)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-3.6700 -1.6700 -0.3747  1.7394  5.1017 
+
+Coefficients:
+                      Estimate Std. Error t value Pr(>|t|)    
+(Intercept)          30.226837   1.820431   16.60   <2e-16 ***
+HiFICOLowInt$FICOBeg -0.029530   0.002447  -12.07   <2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+Residual standard error: 1.893 on 853 degrees of freedom
+Multiple R-squared: 0.1458,	Adjusted R-squared: 0.1448 
+F-statistic: 145.6 on 1 and 853 DF,  p-value: < 2.2e-16 
+
+> confint(lm3)
+                           2.5 %      97.5 %
+(Intercept)          26.65378784 33.79988540
+HiFICOLowInt$FICOBeg -0.03433277 -0.02472693
+> 
+> summary(lm4)
+
+Call:
+lm(formula = HiFICOHiInt$IntRatePrim ~ HiFICOHiInt$FICOBeg)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-1.9548 -1.3304 -0.6919  1.0452  6.0452 
+
+Coefficients:
+                     Estimate Std. Error t value Pr(>|t|)    
+(Intercept)         33.619571   6.148812   5.468  1.6e-07 ***
+HiFICOHiInt$FICOBeg -0.026288   0.008478  -3.101  0.00226 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+Residual standard error: 1.776 on 170 degrees of freedom
+Multiple R-squared: 0.05353,	Adjusted R-squared: 0.04796 
+F-statistic: 9.615 on 1 and 170 DF,  p-value: 0.00226 
+
+> confint(lm4)
+                          2.5 %       97.5 %
+(Intercept)         21.48171326 45.757427906
+HiFICOHiInt$FICOBeg -0.04302427 -0.009552668
+> 
+> summary(lm5)
+
+Call:
+lm(formula = LowFICOHiInt$IntRatePrim ~ LowFICOHiInt$FICOBeg)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-4.9192 -2.0863 -0.7388  1.7333  7.9137 
+
+Coefficients:
+                      Estimate Std. Error t value Pr(>|t|)    
+(Intercept)          48.137011   3.987186  12.073  < 2e-16 ***
+LowFICOHiInt$FICOBeg -0.047215   0.005877  -8.034  2.4e-15 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+Residual standard error: 2.637 on 1111 degrees of freedom
+Multiple R-squared: 0.0549,	Adjusted R-squared: 0.05405 
+F-statistic: 64.54 on 1 and 1111 DF,  p-value: 2.398e-15 
+
+> confint(lm5)
+                           2.5 %      97.5 %
+(Intercept)          40.31374649 55.96027516
+LowFICOHiInt$FICOBeg -0.05874688 -0.03568375
+
+# Linear Model for factors # Entire data set
+lm1 <- lm(loansMod$IntRatePrim ~ as.factor(loansMod$InquiresRank))
+summary(lm1)
+confint(lm1)
+
+# LowFICOHiInt # expected
+lm2 <- lm(LowFICOHiInt$IntRatePrim ~ as.factor(LowFICOHiInt$InquiresRank))
+summary(lm2)
+confint(lm2)
+
+#HiFICOLowInt # expected
+lm3 <- lm(HiFICOLowInt$IntRatePrim ~ as.factor(HiFICOLowInt$InquiresRank))
+summary(lm3)
+confint(lm3)
+
+#HiFICOHiInt # counter intuitive re: FICO and interest rates
+lm4 <- lm(HiFICOHiInt$IntRatePrim ~ as.factor(HiFICOHiInt$InquiresRank))
+summary(lm4)
+confint(lm4)
+
+#LowFICOLowInt # counter intuitive re: FICO and interest rates
+lm5 <- lm(LowFICOLowInt$IntRatePrim ~ as.factor(LowFICOLowInt$InquiresRank))
+summary(lm5)
+confint(lm5)
+
+> # Linear Model for factors # Entire data set
+> lm1 <- lm(loansMod$IntRatePrim ~ as.factor(loansMod$InquiresRank))
+> summary(lm1)
+
+Call:
+lm(formula = loansMod$IntRatePrim ~ as.factor(loansMod$InquiresRank))
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-8.6770 -3.2024  0.2456  2.3230 12.2456 
+
+Coefficients:
+                                  Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                        11.7544     0.1170 100.491  < 2e-16 ***
+as.factor(loansMod$InquiresRank)B   1.4480     0.1993   7.266 4.92e-13 ***
+as.factor(loansMod$InquiresRank)C   1.7783     0.2541   6.998 3.33e-12 ***
+as.factor(loansMod$InquiresRank)Z   1.9226     0.2832   6.788 1.42e-11 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+Residual standard error: 4.136 on 2496 degrees of freedom
+Multiple R-squared: 0.03875,	Adjusted R-squared: 0.03759 
+F-statistic: 33.54 on 3 and 2496 DF,  p-value: < 2.2e-16 
+
+> confint(lm1)
+                                      2.5 %    97.5 %
+(Intercept)                       11.525033 11.983767
+as.factor(loansMod$InquiresRank)B  1.057262  1.838808
+as.factor(loansMod$InquiresRank)C  1.280012  2.276664
+as.factor(loansMod$InquiresRank)Z  1.367222  2.478063
+> 
+> # LowFICOHiInt # expected
+> lm2 <- lm(LowFICOHiInt$IntRatePrim ~ as.factor(LowFICOHiInt$InquiresRank))
+> summary(lm2)
+
+Call:
+lm(formula = LowFICOHiInt$IntRatePrim ~ as.factor(LowFICOHiInt$InquiresRank))
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-3.2951 -2.1399 -0.9597  1.8601  8.0403 
+
+Coefficients:
+                                      Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                            15.9597     0.1282 124.461   <2e-16 ***
+as.factor(LowFICOHiInt$InquiresRank)B   0.1802     0.1946   0.926    0.355    
+as.factor(LowFICOHiInt$InquiresRank)C   0.3354     0.2379   1.409    0.159    
+as.factor(LowFICOHiInt$InquiresRank)Z   0.3260     0.2626   1.242    0.215    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+Residual standard error: 2.711 on 1109 degrees of freedom
+Multiple R-squared: 0.002568,	Adjusted R-squared: -0.0001297 
+F-statistic: 0.9519 on 3 and 1109 DF,  p-value: 0.4148 
+
+> confint(lm2)
+                                           2.5 %     97.5 %
+(Intercept)                           15.7081299 16.2113332
+as.factor(LowFICOHiInt$InquiresRank)B -0.2016285  0.5620488
+as.factor(LowFICOHiInt$InquiresRank)C -0.1314789  0.8021798
+as.factor(LowFICOHiInt$InquiresRank)Z -0.1892085  0.8411740
+> 
+> #HiFICOLowInt # expected
+> lm3 <- lm(HiFICOLowInt$IntRatePrim ~ as.factor(HiFICOLowInt$InquiresRank))
+> summary(lm3)
+
+Call:
+lm(formula = HiFICOLowInt$IntRatePrim ~ as.factor(HiFICOLowInt$InquiresRank))
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-3.710 -1.708 -0.710  1.984  3.983 
+
+Coefficients:
+                                      Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                            8.01649    0.09213  87.016  < 2e-16 ***
+as.factor(HiFICOLowInt$InquiresRank)B  0.51033    0.16902   3.019  0.00261 ** 
+as.factor(HiFICOLowInt$InquiresRank)C  0.69351    0.22282   3.112  0.00192 ** 
+as.factor(HiFICOLowInt$InquiresRank)Z  0.69120    0.26798   2.579  0.01007 *  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+Residual standard error: 2.029 on 851 degrees of freedom
+Multiple R-squared: 0.02137,	Adjusted R-squared: 0.01792 
+F-statistic: 6.195 on 3 and 851 DF,  p-value: 0.0003646 
+
+> confint(lm3)
+                                          2.5 %   97.5 %
+(Intercept)                           7.8356729 8.197317
+as.factor(HiFICOLowInt$InquiresRank)B 0.1785938 0.842075
+as.factor(HiFICOLowInt$InquiresRank)C 0.2561553 1.130855
+as.factor(HiFICOLowInt$InquiresRank)Z 0.1652096 1.217185
+> 
+> #HiFICOHiInt # counter intuitive re: FICO and interest rates
+> lm4 <- lm(HiFICOHiInt$IntRatePrim ~ as.factor(HiFICOHiInt$InquiresRank))
+> summary(lm4)
+
+Call:
+lm(formula = HiFICOHiInt$IntRatePrim ~ as.factor(HiFICOHiInt$InquiresRank))
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-1.7500 -1.4182 -0.6935  1.2500  6.3065 
+
+Coefficients:
+                                     Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                          14.69355    0.23237  63.234   <2e-16 ***
+as.factor(HiFICOHiInt$InquiresRank)B -0.27537    0.33891  -0.812    0.418    
+as.factor(HiFICOHiInt$InquiresRank)C -0.30645    0.40247  -0.761    0.447    
+as.factor(HiFICOHiInt$InquiresRank)Z  0.05645    0.43987   0.128    0.898    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+Residual standard error: 1.83 on 168 degrees of freedom
+Multiple R-squared: 0.00707,	Adjusted R-squared: -0.01066 
+F-statistic: 0.3987 on 3 and 168 DF,  p-value: 0.7541 
+
+> confint(lm4)
+                                          2.5 %     97.5 %
+(Intercept)                          14.2348096 15.1522872
+as.factor(HiFICOHiInt$InquiresRank)B -0.9444451  0.3937119
+as.factor(HiFICOHiInt$InquiresRank)C -1.1010106  0.4881073
+as.factor(HiFICOHiInt$InquiresRank)Z -0.8119270  0.9248302
+> 
+> #LowFICOLowInt # counter intuitive re: FICO and interest rates
+> lm5 <- lm(LowFICOLowInt$IntRatePrim ~ as.factor(LowFICOLowInt$InquiresRank))
+> summary(lm5)
+
+Call:
+lm(formula = LowFICOLowInt$IntRatePrim ~ as.factor(LowFICOLowInt$InquiresRank))
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-4.7812 -0.7812  0.2187  1.2187  1.2187 
+
+Coefficients:
+                                       Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                            10.78125    0.08329 129.446   <2e-16 ***
+as.factor(LowFICOLowInt$InquiresRank)B  0.27431    0.19956   1.375   0.1701    
+as.factor(LowFICOLowInt$InquiresRank)C  0.49148    0.29607   1.660   0.0978 .  
+as.factor(LowFICOLowInt$InquiresRank)Z  0.46875    0.26525   1.767   0.0781 .  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+Residual standard error: 1.333 on 356 degrees of freedom
+Multiple R-squared: 0.01765,	Adjusted R-squared: 0.009372 
+F-statistic: 2.132 on 3 and 356 DF,  p-value: 0.09584 
+
+> confint(lm5)
+                                             2.5 %     97.5 %
+(Intercept)                            10.61745211 10.9450479
+as.factor(LowFICOLowInt$InquiresRank)B -0.11815161  0.6667627
+as.factor(LowFICOLowInt$InquiresRank)C -0.09078595  1.0737405
+as.factor(LowFICOLowInt$InquiresRank)Z -0.05291110  0.9904111
+> 
+
+# Linear Model for factors # Entire data set # Loan.Length (or LoanLength)
+lm1 <- lm(loansMod$IntRatePrim ~ as.factor(loansMod$Loan.Length))
+summary(lm1)
+confint(lm1)
+
+# LowFICOHiInt # expected
+lm2 <- lm(LowFICOHiInt$IntRatePrim ~ as.factor(LowFICOHiInt$Loan.Length))
+summary(lm2)
+confint(lm2)
+
+#HiFICOLowInt # expected
+lm3 <- lm(HiFICOLowInt$IntRatePrim ~ as.factor(HiFICOLowInt$Loan.Length))
+summary(lm3)
+confint(lm3)
+
+#HiFICOHiInt # counter intuitive re: FICO and interest rates
+lm4 <- lm(HiFICOHiInt$IntRatePrim ~ as.factor(HiFICOHiInt$Loan.Length))
+summary(lm4)
+confint(lm4)
+
+#LowFICOLowInt # counter intuitive re: FICO and interest rates
+lm5 <- lm(LowFICOLowInt$IntRatePrim ~ as.factor(LowFICOLowInt$Loan.Length))
+summary(lm5)
+confint(lm5)
+
+> # Linear Model for factors # Entire data set # Loan.Length (or LoanLength)
+> lm1 <- lm(loansMod$IntRatePrim ~ as.factor(loansMod$Loan.Length))
+> summary(lm1)
+
+Call:
+lm(formula = loansMod$IntRatePrim ~ as.factor(loansMod$Loan.Length))
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-10.872  -3.645   0.355   2.355  12.355 
+
+Coefficients:
+                                         Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                              11.64498    0.08683  134.11   <2e-16 ***
+as.factor(loansMod$Loan.Length)60 months  4.22728    0.18546   22.79   <2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+Residual standard error: 3.836 on 2498 degrees of freedom
+Multiple R-squared: 0.1722,	Adjusted R-squared: 0.1718 
+F-statistic: 519.6 on 1 and 2498 DF,  p-value: < 2.2e-16 
+
+> confint(lm1)
+                                             2.5 %    97.5 %
+(Intercept)                              11.474716 11.815243
+as.factor(loansMod$Loan.Length)60 months  3.863618  4.590949
+> 
+> # LowFICOHiInt # expected
+> lm2 <- lm(LowFICOHiInt$IntRatePrim ~ as.factor(LowFICOHiInt$Loan.Length))
+> summary(lm2)
+
+Call:
+lm(formula = LowFICOHiInt$IntRatePrim ~ as.factor(LowFICOHiInt$Loan.Length))
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-5.5338 -1.5338 -0.1721  1.8279  8.8279 
+
+Coefficients:
+                                             Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                                  15.17207    0.07956  190.71   <2e-16 ***
+as.factor(LowFICOHiInt$Loan.Length)60 months  3.36169    0.15050   22.34   <2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+Residual standard error: 2.253 on 1111 degrees of freedom
+Multiple R-squared: 0.3099,	Adjusted R-squared: 0.3093 
+F-statistic: 498.9 on 1 and 1111 DF,  p-value: < 2.2e-16 
+
+> confint(lm2)
+                                                 2.5 %    97.5 %
+(Intercept)                                  15.015970 15.328170
+as.factor(LowFICOHiInt$Loan.Length)60 months  3.066387  3.656997
+> 
+> #HiFICOLowInt # expected
+> lm3 <- lm(HiFICOLowInt$IntRatePrim ~ as.factor(HiFICOLowInt$Loan.Length))
+> summary(lm3)
+
+Call:
+lm(formula = HiFICOLowInt$IntRatePrim ~ as.factor(HiFICOLowInt$Loan.Length))
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-5.1043 -0.9878 -0.9878  1.8957  4.0122 
+
+Coefficients:
+                                             Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                                   7.98784    0.07046  113.37   <2e-16 ***
+as.factor(HiFICOLowInt$Loan.Length)60 months  2.11651    0.19212   11.02   <2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+Residual standard error: 1.917 on 853 degrees of freedom
+Multiple R-squared: 0.1246,	Adjusted R-squared: 0.1235 
+F-statistic: 121.4 on 1 and 853 DF,  p-value: < 2.2e-16 
+
+> confint(lm3)
+                                                2.5 %  97.5 %
+(Intercept)                                  7.849545 8.12613
+as.factor(HiFICOLowInt$Loan.Length)60 months 1.739430 2.49359
+> 
+> #HiFICOHiInt # counter intuitive re: FICO and interest rates
+> lm4 <- lm(HiFICOHiInt$IntRatePrim ~ as.factor(HiFICOHiInt$Loan.Length))
+> summary(lm4)
+
+Call:
+lm(formula = HiFICOHiInt$IntRatePrim ~ as.factor(HiFICOHiInt$Loan.Length))
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-1.8393 -1.0333 -0.8393  1.1607  6.1607 
+
+Coefficients:
+                                            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                                  14.0333     0.2303  60.932  < 2e-16 ***
+as.factor(HiFICOHiInt$Loan.Length)60 months   0.8060     0.2854   2.824  0.00531 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+Residual standard error: 1.784 on 170 degrees of freedom
+Multiple R-squared: 0.0448,	Adjusted R-squared: 0.03919 
+F-statistic: 7.974 on 1 and 170 DF,  p-value: 0.005312 
+
+> confint(lm4)
+                                                 2.5 %    97.5 %
+(Intercept)                                 13.5786955 14.487971
+as.factor(HiFICOHiInt$Loan.Length)60 months  0.2425472  1.369358
+> 
+> #LowFICOLowInt # counter intuitive re: FICO and interest rates
+> lm5 <- lm(LowFICOLowInt$IntRatePrim ~ as.factor(LowFICOLowInt$Loan.Length))
+> summary(lm5)
+
+Call:
+lm(formula = LowFICOLowInt$IntRatePrim ~ as.factor(LowFICOLowInt$Loan.Length))
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-5.0000 -0.8857  0.1143  1.1143  1.1143 
+
+Coefficients:
+                                              Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                                   10.88571    0.07166 151.909   <2e-16 ***
+as.factor(LowFICOLowInt$Loan.Length)60 months  0.11429    0.42996   0.266    0.791    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+Residual standard error: 1.341 on 358 degrees of freedom
+Multiple R-squared: 0.0001973,	Adjusted R-squared: -0.002595 
+F-statistic: 0.07065 on 1 and 358 DF,  p-value: 0.7905 
+
+> confint(lm5)
+                                                   2.5 %     97.5 %
+(Intercept)                                   10.7447875 11.0266410
+as.factor(LowFICOLowInt$Loan.Length)60 months -0.7312748  0.9598462
+> 
+
+# Linear Model for factors # Entire data set # Home.Ownership 
+lm1 <- lm(loansMod$IntRatePrim ~ as.factor(loansMod$Home.Ownership))
+summary(lm1)
+confint(lm1)
+
+# LowFICOHiInt # expected
+lm2 <- lm(LowFICOHiInt$IntRatePrim ~ as.factor(LowFICOHiInt$Home.Ownership))
+summary(lm2)
+confint(lm2)
+
+#HiFICOLowInt # expected
+lm3 <- lm(HiFICOLowInt$IntRatePrim ~ as.factor(HiFICOLowInt$Home.Ownership))
+summary(lm3)
+confint(lm3)
+
+#HiFICOHiInt # counter intuitive re: FICO and interest rates
+lm4 <- lm(HiFICOHiInt$IntRatePrim ~ as.factor(HiFICOHiInt$Home.Ownership))
+summary(lm4)
+confint(lm4)
+
+#LowFICOLowInt # counter intuitive re: FICO and interest rates
+lm5 <- lm(LowFICOLowInt$IntRatePrim ~ as.factor(LowFICOLowInt$Home.Ownership))
+summary(lm5)
+confint(lm5)
+
+> 
+> # Linear Model for factors # Entire data set # Home.Ownership 
+> lm1 <- lm(loansMod$IntRatePrim ~ as.factor(loansMod$Home.Ownership))
+> summary(lm1)
+
+Call:
+lm(formula = loansMod$IntRatePrim ~ as.factor(loansMod$Home.Ownership))
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-7.9049 -2.9049  0.0951  2.7413 11.7413 
+
+Coefficients:
+                                        Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                              12.2587     0.1241  98.810  < 2e-16 ***
+as.factor(loansMod$Home.Ownership)NONE   -5.2587     4.2054  -1.250 0.211245    
+as.factor(loansMod$Home.Ownership)OTHER   3.3413     1.8840   1.774 0.076263 .  
+as.factor(loansMod$Home.Ownership)OWN     0.1513     0.3221   0.470 0.638602    
+as.factor(loansMod$Home.Ownership)RENT    0.6462     0.1755   3.681 0.000237 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+Residual standard error: 4.204 on 2495 degrees of freedom
+Multiple R-squared: 0.007247,	Adjusted R-squared: 0.005655 
+F-statistic: 4.553 on 4 and 2495 DF,  p-value: 0.001152 
+
+> confint(lm1)
+                                              2.5 %     97.5 %
+(Intercept)                              12.0154317 12.5019899
+as.factor(loansMod$Home.Ownership)NONE  -13.5051188  2.9876972
+as.factor(loansMod$Home.Ownership)OTHER  -0.3530303  7.0356087
+as.factor(loansMod$Home.Ownership)OWN    -0.4803001  0.7828785
+as.factor(loansMod$Home.Ownership)RENT    0.3019771  0.9903744
+> 
+> # LowFICOHiInt # expected
+> lm2 <- lm(LowFICOHiInt$IntRatePrim ~ as.factor(LowFICOHiInt$Home.Ownership))
+> summary(lm2)
+
+Call:
+lm(formula = LowFICOHiInt$IntRatePrim ~ as.factor(LowFICOHiInt$Home.Ownership))
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-3.279 -2.002 -1.002  1.721  7.998 
+
+Coefficients:
+                                            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                                  16.2790     0.1281 127.100   <2e-16 ***
+as.factor(LowFICOHiInt$Home.Ownership)OTHER  -0.6790     1.2191  -0.557    0.578    
+as.factor(LowFICOHiInt$Home.Ownership)OWN    -0.2790     0.3076  -0.907    0.364    
+as.factor(LowFICOHiInt$Home.Ownership)RENT   -0.2773     0.1714  -1.617    0.106    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+Residual standard error: 2.711 on 1109 degrees of freedom
+Multiple R-squared: 0.002675,	Adjusted R-squared: -2.248e-05 
+F-statistic: 0.9917 on 3 and 1109 DF,  p-value: 0.3959 
+
+> confint(lm2)
+                                                 2.5 %     97.5 %
+(Intercept)                                 16.0277107 16.5303250
+as.factor(LowFICOHiInt$Home.Ownership)OTHER -3.0710610  1.7130253
+as.factor(LowFICOHiInt$Home.Ownership)OWN   -0.8824669  0.3244312
+as.factor(LowFICOHiInt$Home.Ownership)RENT  -0.6136198  0.0591177
+> 
+> #HiFICOLowInt # expected
+> lm3 <- lm(HiFICOLowInt$IntRatePrim ~ as.factor(HiFICOLowInt$Home.Ownership))
+> summary(lm3)
+
+Call:
+lm(formula = HiFICOLowInt$IntRatePrim ~ as.factor(HiFICOLowInt$Home.Ownership))
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-3.3563 -1.3563 -0.3563  1.7086  4.2537 
+
+Coefficients:
+                                           Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                                 8.29139    0.09605  86.320   <2e-16 ***
+as.factor(HiFICOLowInt$Home.Ownership)NONE -1.29139    2.04666  -0.631   0.5282    
+as.factor(HiFICOLowInt$Home.Ownership)OWN  -0.54512    0.26760  -2.037   0.0419 *  
+as.factor(HiFICOLowInt$Home.Ownership)RENT  0.06490    0.14745   0.440   0.6599    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+Residual standard error: 2.044 on 851 degrees of freedom
+Multiple R-squared: 0.006336,	Adjusted R-squared: 0.002833 
+F-statistic: 1.809 on 3 and 851 DF,  p-value: 0.144 
+
+> confint(lm3)
+                                                2.5 %      97.5 %
+(Intercept)                                 8.1028594  8.47992207
+as.factor(HiFICOLowInt$Home.Ownership)NONE -5.3084800  2.72569858
+as.factor(HiFICOLowInt$Home.Ownership)OWN  -1.0703500 -0.01989412
+as.factor(HiFICOLowInt$Home.Ownership)RENT -0.2245027  0.35429614
+> 
+> #HiFICOHiInt # counter intuitive re: FICO and interest rates
+> lm4 <- lm(HiFICOHiInt$IntRatePrim ~ as.factor(HiFICOHiInt$Home.Ownership))
+> summary(lm4)
+
+Call:
+lm(formula = HiFICOHiInt$IntRatePrim ~ as.factor(HiFICOHiInt$Home.Ownership))
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-1.7500 -1.3919 -0.5709  1.2500  6.2500 
+
+Coefficients:
+                                          Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                                14.7500     0.1939  76.078   <2e-16 ***
+as.factor(HiFICOHiInt$Home.Ownership)OWN   -0.6500     0.6069  -1.071    0.286    
+as.factor(HiFICOHiInt$Home.Ownership)RENT  -0.3581     0.2869  -1.248    0.214    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+Residual standard error: 1.819 on 169 degrees of freedom
+Multiple R-squared: 0.01304,	Adjusted R-squared: 0.001355 
+F-statistic: 1.116 on 2 and 169 DF,  p-value: 0.33 
+
+> confint(lm4)
+                                               2.5 %     97.5 %
+(Intercept)                               14.3672598 15.1327402
+as.factor(HiFICOHiInt$Home.Ownership)OWN  -1.8481664  0.5481664
+as.factor(HiFICOHiInt$Home.Ownership)RENT -0.9244071  0.2081908
+> 
+> #LowFICOLowInt # counter intuitive re: FICO and interest rates
+> lm5 <- lm(LowFICOLowInt$IntRatePrim ~ as.factor(LowFICOLowInt$Home.Ownership))
+> summary(lm5)
+
+Call:
+lm(formula = LowFICOLowInt$IntRatePrim ~ as.factor(LowFICOLowInt$Home.Ownership))
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-4.8553 -0.8553  0.1447  1.0930  1.1447 
+
+Coefficients:
+                                            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                                 10.85535    0.10644 101.981   <2e-16 ***
+as.factor(LowFICOLowInt$Home.Ownership)OWN   0.11017    0.27102   0.407    0.685    
+as.factor(LowFICOLowInt$Home.Ownership)RENT  0.05163    0.14766   0.350    0.727    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+Residual standard error: 1.342 on 357 degrees of freedom
+Multiple R-squared: 0.00063,	Adjusted R-squared: -0.004969 
+F-statistic: 0.1125 on 2 and 357 DF,  p-value: 0.8936 
+
+> confint(lm5)
+                                                 2.5 %     97.5 %
+(Intercept)                                 10.6460087 11.0646831
+as.factor(LowFICOLowInt$Home.Ownership)OWN  -0.4228276  0.6431703
+as.factor(LowFICOLowInt$Home.Ownership)RENT -0.2387689  0.3420306
+
+
+# Linear Model for factors # Entire data set # Loan.Purpose 
+lm1 <- lm(loansMod$IntRatePrim ~ as.factor(loansMod$Loan.Purpose))
+summary(lm1)
+confint(lm1)
+
+# LowFICOHiInt # expected
+lm2 <- lm(LowFICOHiInt$IntRatePrim ~ as.factor(LowFICOHiInt$Loan.Purpose))
+summary(lm2)
+confint(lm2)
+
+#HiFICOLowInt # expected
+lm3 <- lm(HiFICOLowInt$IntRatePrim ~ as.factor(HiFICOLowInt$Loan.Purpose))
+summary(lm3)
+confint(lm3)
+
+#HiFICOHiInt # counter intuitive re: FICO and interest rates
+lm4 <- lm(HiFICOHiInt$IntRatePrim ~ as.factor(HiFICOHiInt$Loan.Purpose))
+summary(lm4)
+confint(lm4)
+
+#LowFICOLowInt # counter intuitive re: FICO and interest rates
+lm5 <- lm(LowFICOLowInt$IntRatePrim ~ as.factor(LowFICOLowInt$Loan.Purpose))
+summary(lm5)
+confint(lm5)
+
+> # Linear Model for factors # Entire data set # Loan.Purpose 
+> lm1 <- lm(loansMod$IntRatePrim ~ as.factor(loansMod$Loan.Purpose))
+> summary(lm1)
+
+Call:
+lm(formula = loansMod$IntRatePrim ~ as.factor(loansMod$Loan.Purpose))
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-8.0949 -3.0949 -0.0949  2.7011 11.8333 
+
+Coefficients:
+                                                   Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                                         10.5600     0.5864  18.009  < 2e-16 ***
+as.factor(loansMod$Loan.Purpose)credit_card          2.0166     0.6185   3.260  0.00113 ** 
+as.factor(loansMod$Loan.Purpose)debt_consolidation   2.5349     0.5975   4.243 2.29e-05 ***
+as.factor(loansMod$Loan.Purpose)educational         -0.2267     1.2206  -0.186  0.85270    
+as.factor(loansMod$Loan.Purpose)home_improvement     0.5124     0.6760   0.758  0.44854    
+as.factor(loansMod$Loan.Purpose)house                2.3900     1.0970   2.179  0.02945 *  
+as.factor(loansMod$Loan.Purpose)major_purchase      -0.2333     0.7170  -0.325  0.74494    
+as.factor(loansMod$Loan.Purpose)medical              0.6067     0.9575   0.634  0.52642    
+as.factor(loansMod$Loan.Purpose)moving               2.4745     0.9678   2.557  0.01062 *  
+as.factor(loansMod$Loan.Purpose)other                2.1166     0.6553   3.230  0.00125 ** 
+as.factor(loansMod$Loan.Purpose)renewable_energy    -1.3100     2.1545  -0.608  0.54322    
+as.factor(loansMod$Loan.Purpose)small_business       1.7389     0.7358   2.363  0.01820 *  
+as.factor(loansMod$Loan.Purpose)vacation             0.7733     1.0782   0.717  0.47329    
+as.factor(loansMod$Loan.Purpose)wedding              1.1323     0.8858   1.278  0.20127    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+Residual standard error: 4.146 on 2486 degrees of freedom
+Multiple R-squared: 0.03759,	Adjusted R-squared: 0.03256 
+F-statistic:  7.47 on 13 and 2486 DF,  p-value: 1.245e-14 
+
+> confint(lm1)
+                                                        2.5 %    97.5 %
+(Intercept)                                         9.4101669 11.709833
+as.factor(loansMod$Loan.Purpose)credit_card         0.8037274  3.229426
+as.factor(loansMod$Loan.Purpose)debt_consolidation  1.3632534  3.706494
+as.factor(loansMod$Loan.Purpose)educational        -2.6202351  2.166902
+as.factor(loansMod$Loan.Purpose)home_improvement   -0.8131589  1.837896
+as.factor(loansMod$Loan.Purpose)house               0.2388593  4.541141
+as.factor(loansMod$Loan.Purpose)major_purchase     -1.6391937  1.172659
+as.factor(loansMod$Loan.Purpose)medical            -1.2710029  2.484336
+as.factor(loansMod$Loan.Purpose)moving              0.5766876  4.372278
+as.factor(loansMod$Loan.Purpose)other               0.8317042  3.401530
+as.factor(loansMod$Loan.Purpose)renewable_energy   -5.5347565  2.914756
+as.factor(loansMod$Loan.Purpose)small_business      0.2959532  3.181748
+as.factor(loansMod$Loan.Purpose)vacation           -1.3409069  2.887574
+as.factor(loansMod$Loan.Purpose)wedding            -0.6046830  2.869298
+> 
+> # LowFICOHiInt # expected
+> lm2 <- lm(LowFICOHiInt$IntRatePrim ~ as.factor(LowFICOHiInt$Loan.Purpose))
+> summary(lm2)
+
+Call:
+lm(formula = LowFICOHiInt$IntRatePrim ~ as.factor(LowFICOHiInt$Loan.Purpose))
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-3.7949 -2.2321 -0.8357  1.7679  8.1643 
+
+Coefficients:
+                                                         Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                                             1.500e+01  6.362e-01  23.577   <2e-16 ***
+as.factor(LowFICOHiInt$Loan.Purpose)credit_card         8.357e-01  6.626e-01   1.261   0.2075    
+as.factor(LowFICOHiInt$Loan.Purpose)debt_consolidation  1.232e+00  6.451e-01   1.910   0.0564 .  
+as.factor(LowFICOHiInt$Loan.Purpose)educational        -6.103e-14  1.683e+00   0.000   1.0000    
+as.factor(LowFICOHiInt$Loan.Purpose)home_improvement    1.795e+00  7.692e-01   2.334   0.0198 *  
+as.factor(LowFICOHiInt$Loan.Purpose)house               1.364e+00  1.033e+00   1.320   0.1871    
+as.factor(LowFICOHiInt$Loan.Purpose)major_purchase     -5.000e-01  8.770e-01  -0.570   0.5687    
+as.factor(LowFICOHiInt$Loan.Purpose)medical            -4.284e-14  9.619e-01   0.000   1.0000    
+as.factor(LowFICOHiInt$Loan.Purpose)moving              1.786e+00  9.619e-01   1.856   0.0637 .  
+as.factor(LowFICOHiInt$Loan.Purpose)other               1.388e+00  7.004e-01   1.982   0.0477 *  
+as.factor(LowFICOHiInt$Loan.Purpose)renewable_energy   -1.000e+00  2.773e+00  -0.361   0.7185    
+as.factor(LowFICOHiInt$Loan.Purpose)small_business      1.194e+00  7.999e-01   1.492   0.1359    
+as.factor(LowFICOHiInt$Loan.Purpose)vacation            2.222e-01  1.102e+00   0.202   0.8402    
+as.factor(LowFICOHiInt$Loan.Purpose)wedding             9.231e-01  9.825e-01   0.940   0.3477    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+Residual standard error: 2.699 on 1099 degrees of freedom
+Multiple R-squared: 0.02016,	Adjusted R-squared: 0.008569 
+F-statistic: 1.739 on 13 and 1099 DF,  p-value: 0.04817 
+
+> confint(lm2)
+                                                             2.5 %    97.5 %
+(Intercept)                                            13.75164455 16.248355
+as.factor(LowFICOHiInt$Loan.Purpose)credit_card        -0.46435246  2.135714
+as.factor(LowFICOHiInt$Loan.Purpose)debt_consolidation -0.03364755  2.497822
+as.factor(LowFICOHiInt$Loan.Purpose)educational        -3.30283806  3.302838
+as.factor(LowFICOHiInt$Loan.Purpose)home_improvement    0.28568365  3.304060
+as.factor(LowFICOHiInt$Loan.Purpose)house              -0.66330374  3.390576
+as.factor(LowFICOHiInt$Loan.Purpose)major_purchase     -2.22073923  1.220739
+as.factor(LowFICOHiInt$Loan.Purpose)medical            -1.88733603  1.887336
+as.factor(LowFICOHiInt$Loan.Purpose)moving             -0.10162175  3.673050
+as.factor(LowFICOHiInt$Loan.Purpose)other               0.01404331  2.762427
+as.factor(LowFICOHiInt$Loan.Purpose)renewable_energy   -6.44145523  4.441455
+as.factor(LowFICOHiInt$Loan.Purpose)small_business     -0.37593041  2.763027
+as.factor(LowFICOHiInt$Loan.Purpose)vacation           -1.93999283  2.384437
+as.factor(LowFICOHiInt$Loan.Purpose)wedding            -1.00465851  2.850812
+> 
+> #HiFICOLowInt # expected
+> lm3 <- lm(HiFICOLowInt$IntRatePrim ~ as.factor(HiFICOLowInt$Loan.Purpose))
+> summary(lm3)
+
+Call:
+lm(formula = HiFICOLowInt$IntRatePrim ~ as.factor(HiFICOLowInt$Loan.Purpose))
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-3.4623 -1.4623 -0.4623  1.6932  4.0000 
+
+Coefficients:
+                                                       Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                                              7.3077     0.3998  18.278  < 2e-16 ***
+as.factor(HiFICOLowInt$Loan.Purpose)credit_card          0.9462     0.4380   2.160  0.03103 *  
+as.factor(HiFICOLowInt$Loan.Purpose)debt_consolidation   1.1546     0.4131   2.795  0.00531 ** 
+as.factor(HiFICOLowInt$Loan.Purpose)educational          0.3173     0.8242   0.385  0.70036    
+as.factor(HiFICOLowInt$Loan.Purpose)home_improvement     0.9991     0.4551   2.196  0.02839 *  
+as.factor(HiFICOLowInt$Loan.Purpose)house                0.4066     0.8681   0.468  0.63964    
+as.factor(HiFICOLowInt$Loan.Purpose)major_purchase       0.6923     0.4825   1.435  0.15167    
+as.factor(HiFICOLowInt$Loan.Purpose)medical             -0.5934     0.6758  -0.878  0.38016    
+as.factor(HiFICOLowInt$Loan.Purpose)moving               0.9923     0.7586   1.308  0.19120    
+as.factor(HiFICOLowInt$Loan.Purpose)other                0.9953     0.4720   2.109  0.03528 *  
+as.factor(HiFICOLowInt$Loan.Purpose)renewable_energy     0.3590     1.2431   0.289  0.77282    
+as.factor(HiFICOLowInt$Loan.Purpose)small_business       1.0158     0.5311   1.913  0.05614 .  
+as.factor(HiFICOLowInt$Loan.Purpose)vacation             0.6923     0.7333   0.944  0.34537    
+as.factor(HiFICOLowInt$Loan.Purpose)wedding              0.8798     0.6478   1.358  0.17476    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+Residual standard error: 2.039 on 841 degrees of freedom
+Multiple R-squared: 0.02352,	Adjusted R-squared: 0.008422 
+F-statistic: 1.558 on 13 and 841 DF,  p-value: 0.09168 
+
+> confint(lm3)
+                                                             2.5 %    97.5 %
+(Intercept)                                             6.52293967 8.0924449
+as.factor(HiFICOLowInt$Loan.Purpose)credit_card         0.08650041 1.8058073
+as.factor(HiFICOLowInt$Loan.Purpose)debt_consolidation  0.34382745 1.9654633
+as.factor(HiFICOLowInt$Loan.Purpose)educational        -1.30050131 1.9351167
+as.factor(HiFICOLowInt$Loan.Purpose)home_improvement    0.10593583 1.8923159
+as.factor(HiFICOLowInt$Loan.Purpose)house              -1.29729337 2.1104802
+as.factor(HiFICOLowInt$Loan.Purpose)major_purchase     -0.25465834 1.6392737
+as.factor(HiFICOLowInt$Loan.Purpose)medical            -1.91988065 0.7330675
+as.factor(HiFICOLowInt$Loan.Purpose)moving             -0.49665574 2.4812711
+as.factor(HiFICOLowInt$Loan.Purpose)other               0.06881815 1.9218578
+as.factor(HiFICOLowInt$Loan.Purpose)renewable_energy   -2.08092074 2.7988695
+as.factor(HiFICOLowInt$Loan.Purpose)small_business     -0.02664582 2.0583200
+as.factor(HiFICOLowInt$Loan.Purpose)vacation           -0.74694583 2.1315612
+as.factor(HiFICOLowInt$Loan.Purpose)wedding            -0.39163689 2.1512523
+> 
+> #HiFICOHiInt # counter intuitive re: FICO and interest rates
+> lm4 <- lm(HiFICOHiInt$IntRatePrim ~ as.factor(HiFICOHiInt$Loan.Purpose))
+> summary(lm4)
+
+Call:
+lm(formula = HiFICOHiInt$IntRatePrim ~ as.factor(HiFICOHiInt$Loan.Purpose))
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-2.2500 -1.4531 -0.6837  1.3163  6.3163 
+
+Coefficients:
+                                                        Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                                            1.300e+01  1.300e+00   9.998   <2e-16 ***
+as.factor(HiFICOHiInt$Loan.Purpose)credit_card         1.211e+00  1.367e+00   0.886    0.377    
+as.factor(HiFICOHiInt$Loan.Purpose)debt_consolidation  1.684e+00  1.313e+00   1.282    0.202    
+as.factor(HiFICOHiInt$Loan.Purpose)educational        -2.031e-14  2.252e+00   0.000    1.000    
+as.factor(HiFICOHiInt$Loan.Purpose)home_improvement    1.571e+00  1.474e+00   1.066    0.288    
+as.factor(HiFICOHiInt$Loan.Purpose)house              -1.557e-14  2.252e+00   0.000    1.000    
+as.factor(HiFICOHiInt$Loan.Purpose)major_purchase      9.000e-01  1.424e+00   0.632    0.528    
+as.factor(HiFICOHiInt$Loan.Purpose)medical             2.500e+00  1.839e+00   1.360    0.176    
+as.factor(HiFICOHiInt$Loan.Purpose)moving              1.000e+00  2.252e+00   0.444    0.658    
+as.factor(HiFICOHiInt$Loan.Purpose)other               1.437e+00  1.379e+00   1.042    0.299    
+as.factor(HiFICOHiInt$Loan.Purpose)small_business      2.250e+00  1.404e+00   1.602    0.111    
+as.factor(HiFICOHiInt$Loan.Purpose)vacation           -1.998e-14  2.252e+00   0.000    1.000    
+as.factor(HiFICOHiInt$Loan.Purpose)wedding             2.000e+00  1.839e+00   1.088    0.278    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+Residual standard error: 1.839 on 159 degrees of freedom
+Multiple R-squared: 0.05078,	Adjusted R-squared: -0.02085 
+F-statistic: 0.7089 on 12 and 159 DF,  p-value: 0.7413 
+
+> confint(lm4)
+                                                           2.5 %    97.5 %
+(Intercept)                                           10.4319471 15.568053
+as.factor(HiFICOHiInt$Loan.Purpose)credit_card        -1.4893062  3.910359
+as.factor(HiFICOHiInt$Loan.Purpose)debt_consolidation -0.9104517  4.277799
+as.factor(HiFICOHiInt$Loan.Purpose)educational        -4.4479981  4.447998
+as.factor(HiFICOHiInt$Loan.Purpose)home_improvement   -1.3404697  4.483327
+as.factor(HiFICOHiInt$Loan.Purpose)house              -4.4479981  4.447998
+as.factor(HiFICOHiInt$Loan.Purpose)major_purchase     -1.9131610  3.713161
+as.factor(HiFICOHiInt$Loan.Purpose)medical            -1.1317753  6.131775
+as.factor(HiFICOHiInt$Loan.Purpose)moving             -3.4479981  5.447998
+as.factor(HiFICOHiInt$Loan.Purpose)other              -1.2863315  4.161331
+as.factor(HiFICOHiInt$Loan.Purpose)small_business     -0.5238142  5.023814
+as.factor(HiFICOHiInt$Loan.Purpose)vacation           -4.4479981  4.447998
+as.factor(HiFICOHiInt$Loan.Purpose)wedding            -1.6317753  5.631775
+> 
+> #LowFICOLowInt # counter intuitive re: FICO and interest rates
+> lm5 <- lm(LowFICOLowInt$IntRatePrim ~ as.factor(LowFICOLowInt$Loan.Purpose))
+> summary(lm5)
+
+Call:
+lm(formula = LowFICOLowInt$IntRatePrim ~ as.factor(LowFICOLowInt$Loan.Purpose))
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-4.8333 -0.9725  0.2907  1.0275  1.8000 
+
+Coefficients:
+                                                        Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                                             10.50000    0.66622  15.761   <2e-16 ***
+as.factor(LowFICOLowInt$Loan.Purpose)credit_card         0.08537    0.68227   0.125    0.901    
+as.factor(LowFICOLowInt$Loan.Purpose)debt_consolidation  0.47253    0.67350   0.702    0.483    
+as.factor(LowFICOLowInt$Loan.Purpose)educational         1.50000    1.01766   1.474    0.141    
+as.factor(LowFICOLowInt$Loan.Purpose)home_improvement    0.33333    0.73653   0.453    0.651    
+as.factor(LowFICOLowInt$Loan.Purpose)house               1.50000    1.48970   1.007    0.315    
+as.factor(LowFICOLowInt$Loan.Purpose)major_purchase      0.78571    0.75542   1.040    0.299    
+as.factor(LowFICOLowInt$Loan.Purpose)moving              1.00000    0.94217   1.061    0.289    
+as.factor(LowFICOLowInt$Loan.Purpose)other               0.55882    0.70431   0.793    0.428    
+as.factor(LowFICOLowInt$Loan.Purpose)small_business     -0.30000    0.78828  -0.381    0.704    
+as.factor(LowFICOLowInt$Loan.Purpose)wedding             0.50000    0.81594   0.613    0.540    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+Residual standard error: 1.332 on 349 degrees of freedom
+Multiple R-squared: 0.03722,	Adjusted R-squared: 0.00963 
+F-statistic: 1.349 on 10 and 349 DF,  p-value: 0.2028 
+
+> confint(lm5)
+                                                             2.5 %    97.5 %
+(Intercept)                                              9.1896981 11.810302
+as.factor(LowFICOLowInt$Loan.Purpose)credit_card        -1.2565142  1.427246
+as.factor(LowFICOLowInt$Loan.Purpose)debt_consolidation -0.8520951  1.797150
+as.factor(LowFICOLowInt$Loan.Purpose)educational        -0.5015193  3.501519
+as.factor(LowFICOLowInt$Loan.Purpose)home_improvement   -1.1152600  1.781927
+as.factor(LowFICOLowInt$Loan.Purpose)house              -1.4299242  4.429924
+as.factor(LowFICOLowInt$Loan.Purpose)major_purchase     -0.7000285  2.271457
+as.factor(LowFICOLowInt$Loan.Purpose)moving             -0.8530468  2.853047
+as.factor(LowFICOLowInt$Loan.Purpose)other              -0.8264123  1.944059
+as.factor(LowFICOLowInt$Loan.Purpose)small_business     -1.8503702  1.250370
+as.factor(LowFICOLowInt$Loan.Purpose)wedding            -1.1047856  2.104786
+
+#Anova
+
+> anova(lm1)
+Analysis of Variance Table
+
+Response: loansMod$IntRatePrim
+                                   Df Sum Sq Mean Sq F value    Pr(>F)    
+as.factor(loansMod$Loan.Purpose)   13   1669 128.420  7.4699 1.245e-14 ***
+Residuals                        2486  42739  17.192                      
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+> anova(lm2)
+Analysis of Variance Table
+
+Response: LowFICOHiInt$IntRatePrim
+                                       Df Sum Sq Mean Sq F value  Pr(>F)  
+as.factor(LowFICOHiInt$Loan.Purpose)   13  164.8 12.6731  1.7393 0.04817 *
+Residuals                            1099 8007.4  7.2861                  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+> anova(lm3)
+Analysis of Variance Table
+
+Response: HiFICOLowInt$IntRatePrim
+                                      Df Sum Sq Mean Sq F value  Pr(>F)  
+as.factor(HiFICOLowInt$Loan.Purpose)  13   84.2  6.4752   1.558 0.09168 .
+Residuals                            841 3495.3  4.1562                  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+> anova(lm4)
+Analysis of Variance Table
+
+Response: HiFICOHiInt$IntRatePrim
+                                     Df Sum Sq Mean Sq F value Pr(>F)
+as.factor(HiFICOHiInt$Loan.Purpose)  12  28.77  2.3971  0.7089 0.7413
+Residuals                           159 537.65  3.3815               
+> anova(lm5)
+Analysis of Variance Table
+
+Response: LowFICOLowInt$IntRatePrim
+                                       Df Sum Sq Mean Sq F value Pr(>F)
+as.factor(LowFICOLowInt$Loan.Purpose)  10  23.95  2.3951  1.3491 0.2028
+Residuals                             349 619.60  1.7754               
+
+# TukeyHSD(lm1) # Entire data set # Loan.Purpose 
+lm1 <- aov(loansMod$IntRatePrim ~ as.factor(loansMod$Loan.Purpose))
+TukeyHSD(lm1)
+
+# LowFICOHiInt # expected
+lm2 <- aov(LowFICOHiInt$IntRatePrim ~ as.factor(LowFICOHiInt$Loan.Purpose))
+TukeyHSD(lm2)
+
+#HiFICOLowInt # expected
+lm3 <- aov(HiFICOLowInt$IntRatePrim ~ as.factor(HiFICOLowInt$Loan.Purpose))
+TukeyHSD(lm3)
+
+#HiFICOHiInt # counter intuitive re: FICO and interest rates
+lm4 <- aov(HiFICOHiInt$IntRatePrim ~ as.factor(HiFICOHiInt$Loan.Purpose))
+TukeyHSD(lm4)
+
+#LowFICOLowInt # counter intuitive re: FICO and interest rates
+lm5 <- aov(LowFICOLowInt$IntRatePrim ~ as.factor(LowFICOLowInt$Loan.Purpose))
+TukeyHSD(lm5)
+
+> # TukeyHSD(lm1) # Entire data set # Loan.Purpose 
+> lm1 <- aov(loansMod$IntRatePrim ~ as.factor(loansMod$Loan.Purpose))
+> TukeyHSD(lm1)
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = loansMod$IntRatePrim ~ as.factor(loansMod$Loan.Purpose))
+
+$`as.factor(loansMod$Loan.Purpose)`
+                                           diff          lwr        upr     p adj
+credit_card-car                      2.01657658  -0.05975083  4.0929040 0.0671659
+debt_consolidation-car               2.53487376   0.52912756  4.5406200 0.0018648*
+educational-car                     -0.22666667  -4.32431700  3.8709837 1.0000000
+home_improvement-car                 0.51236842  -1.75685751  2.7815944 0.9999699
+house-car                            2.39000000  -1.29262815  6.0726282 0.6453177
+major_purchase-car                  -0.23326733  -2.64013178  2.1735971 1.0000000
+medical-car                          0.60666667  -2.60779472  3.8211281 0.9999964
+moving-car                           2.47448276  -0.77443257  5.7233981 0.3692186
+other-car                            2.11661692  -0.08307915  4.3163130 0.0734467
+renewable_energy-car                -1.31000000  -8.54253811  5.9225381 0.9999978
+small_business-car                   1.73885057  -0.73130612  4.2090073 0.5077853
+vacation-car                         0.77333333  -2.84612327  4.3927899 0.9999842
+wedding-car                          1.13230769  -1.84131968  4.1059351 0.9921165
+debt_consolidation-credit_card       0.51829718  -0.24628231  1.2828767 0.5733354
+educational-credit_card             -2.24324324  -5.89732346  1.4108370 0.7282890
+home_improvement-credit_card        -1.50420816  -2.81224115 -0.1961752 0.0087093*
+house-credit_card                    0.37342342  -2.80829217  3.5551390 1.0000000
+major_purchase-credit_card          -2.24984390  -3.78430163 -0.7153862 0.0000800
+medical-credit_card                 -1.40990991  -4.03561477  1.2157949 0.8753047
+moving-credit_card                   0.45790618  -2.20986720  3.1256796 0.9999989
+other-credit_card                    0.10004034  -1.08327145  1.2833521 1.0000000
+renewable_energy-credit_card        -3.32657658 -10.31736849  3.6642153 0.9470724
+small_business-credit_card          -0.27772600  -1.90966905  1.3542170 0.9999990
+vacation-credit_card                -1.24324324  -4.35162387  1.8651374 0.9876170
+wedding-credit_card                 -0.88426888  -3.20892451  1.4403867 0.9921929
+educational-debt_consolidation      -2.76154042  -6.37598153  0.8529007 0.3638265
+home_improvement-debt_consolidation -2.02250534  -3.21533081 -0.8296799 0.0000013
+house-debt_consolidation            -0.14487376  -3.28098543  2.9912379 1.0000000
+major_purchase-debt_consolidation   -2.76814108  -4.20565380 -1.3306284 0.0000000
+medical-debt_consolidation          -1.92820709  -4.49846161  0.6420474 0.3954289
+moving-debt_consolidation           -0.06039100  -2.67360686  2.5528249 1.0000000
+other-debt_consolidation            -0.41825684  -1.47282268  0.6363090 0.9885245
+renewable_energy-debt_consolidation -3.84487376 -10.81502826  3.1252808 0.8519513
+small_business-debt_consolidation   -0.79602318  -2.33716575  0.7451194 0.9038787
+vacation-debt_consolidation         -1.76154042  -4.82322499  1.3001441 0.8092200
+wedding-debt_consolidation          -1.40256606  -3.66440295  0.8592708 0.7141589
+home_improvement-educational         0.73903509  -3.02799996  4.5060701 0.9999943
+house-educational                    2.61666667  -2.13758584  7.3709192 0.8540110
+major_purchase-educational          -0.00660066  -3.85811507  3.8449137 1.0000000
+medical-educational                  0.83333333  -3.56824919  5.2349159 0.9999963
+moving-educational                   2.70114943  -1.72565728  7.1279561 0.7366385
+other-educational                    2.34328358  -1.38228074  6.0688479 0.6934969
+renewable_energy-educational        -1.08333333  -8.91600684  6.7493402 0.9999999
+small_business-educational           1.96551724  -1.92586309  5.8568976 0.9178031
+vacation-educational                 1.00000000  -3.70548965  5.7054896 0.9999852
+wedding-educational                  1.35897436  -2.86992934  5.5878781 0.9985196
+house-home_improvement               1.87763158  -1.43319384  5.1884570 0.8247084
+major_purchase-home_improvement     -0.74563575  -2.53247971  1.0412082 0.9819624
+medical-home_improvement             0.09429825  -2.68645288  2.8750494 1.0000000
+moving-home_improvement              1.96211434  -0.85839371  4.7826224 0.5285707
+other-home_improvement               1.60424849   0.10809422  3.1004028 0.0224793
+renewable_energy-home_improvement   -1.82236842  -8.87285935  5.2281225 0.9998589
+small_business-home_improvement      1.22648215  -0.64474443  3.0977087 0.6294333
+vacation-home_improvement            0.26096491  -2.97944878  3.5013786 1.0000000
+wedding-home_improvement             0.61993927  -1.87851517  3.1183937 0.9999110
+major_purchase-house                -2.62326733  -6.02990425  0.7833696 0.3504527
+medical-house                       -1.78333333  -5.80141006  2.2347434 0.9695765
+moving-house                         0.08448276  -3.96120994  4.1301755 1.0000000
+other-house                         -0.27338308  -3.53694577  2.9901796 1.0000000
+renewable_energy-house              -3.70000000 -11.32376457  3.9237646 0.9385643
+small_business-house                -0.65114943  -4.10279436  2.8004955 0.9999964
+vacation-house                      -1.61666667  -5.96553373  2.7322004 0.9937143
+wedding-house                       -1.25769231  -5.08583003  2.5704454 0.9981425
+medical-major_purchase               0.83993399  -2.05423031  3.7340983 0.9994952
+moving-major_purchase                2.70775009  -0.22463390  5.6401341 0.1063594
+other-major_purchase                 2.34988424   0.65221295  4.0475555 0.0003043
+renewable_energy-major_purchase     -1.07673267  -8.17271975  6.0192544 0.9999997
+small_business-major_purchase        1.97211790  -0.06383375  4.0080696 0.0689180
+vacation-major_purchase              1.00660066  -2.33164605  4.3448474 0.9992398
+wedding-major_purchase               1.36557502  -1.25852193  3.9896720 0.8988136
+moving-medical                       1.86781609  -1.75691029  5.4925425 0.9054308
+other-medical                        1.50995025  -1.21435761  4.2342581 0.8475077
+renewable_energy-medical            -1.91666667  -9.32563408  5.4923007 0.9998575
+small_business-medical               1.13218391  -1.81482553  4.0791933 0.9914359
+vacation-medical                     0.16666667  -3.79359300  4.1269263 1.0000000
+wedding-medical                      0.52564103  -2.85454392  3.9058260 0.9999997
+other-moving                        -0.35786584  -3.12274236  2.4070107 1.0000000
+renewable_energy-moving             -3.78448276 -11.20846329  3.6394978 0.9122838
+small_business-moving               -0.73563218  -3.72018465  2.2489203 0.9999175
+vacation-moving                     -1.70114943  -5.68942542  2.2871266 0.9782060
+wedding-moving                      -1.34217507  -4.75514139  2.0707913 0.9893796
+renewable_energy-other              -3.42661692 -10.45503771  3.6018039 0.9364457
+small_business-other                -0.37776634  -2.16403771  1.4085050 0.9999860
+vacation-other                      -1.34328358  -4.53539220  1.8488250 0.9805968
+wedding-other                       -0.98430922  -3.41978681  1.4511684 0.9864018
+small_business-renewable_energy      3.04885057  -4.06885342 10.1665546 0.9774041
+vacation-renewable_energy            2.08333333  -5.51011794  9.6767846 0.9997263
+wedding-renewable_energy             2.44230769  -4.86539344  9.7500088 0.9977897
+vacation-small_business             -0.96551724  -4.34968164  2.4186472 0.9995803
+wedding-small_business              -0.60654288  -3.28881103  2.0757253 0.9999694
+wedding-vacation                     0.35897436  -3.40843249  4.1263812 1.0000000
+
+> 
+> # LowFICOHiInt # expected
+> lm2 <- aov(LowFICOHiInt$IntRatePrim ~ as.factor(LowFICOHiInt$Loan.Purpose))
+> TukeyHSD(lm2)
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = LowFICOHiInt$IntRatePrim ~ as.factor(LowFICOHiInt$Loan.Purpose))
+
+$`as.factor(LowFICOHiInt$Loan.Purpose)`
+                                             diff         lwr        upr     p adj
+credit_card-car                      8.356808e-01  -1.3913453  3.0627068 0.9929918
+debt_consolidation-car               1.232087e+00  -0.9361837  3.4003582 0.8210289
+educational-car                     -3.019807e-14  -5.6579372  5.6579372 1.0000000
+home_improvement-car                 1.794872e+00  -0.7904477  4.3801913 0.5301747
+house-car                            1.363636e+00  -2.1086198  4.8358925 0.9893102
+major_purchase-car                  -5.000000e-01  -3.4477178  2.4477178 0.9999990
+medical-car                         -3.552714e-14  -3.2331070  3.2331070 1.0000000
+moving-car                           1.785714e+00  -1.4473927  5.0188213 0.8492930
+other-car                            1.388235e+00  -0.9658286  3.7422992 0.7788047
+renewable_energy-car                -1.000000e+00 -10.3215021  8.3215021 1.0000000
+small_business-car                   1.193548e+00  -1.4950522  3.8821490 0.9690321
+vacation-car                         2.222222e-01  -3.4817671  3.9262116 1.0000000
+wedding-car                          9.230769e-01  -2.3792364  4.2253902 0.9996554
+debt_consolidation-credit_card       3.964065e-01  -0.3210096  1.1138225 0.8489104
+educational-credit_card             -8.356808e-01  -6.1106727  4.4393112 0.9999996
+home_improvement-credit_card         9.591910e-01  -0.6210507  2.5394328 0.7418287
+house-credit_card                    5.279556e-01  -2.2773696  3.3332809 0.9999964
+major_purchase-credit_card          -1.335681e+00  -3.4575495  0.7861880 0.6903214
+medical-credit_card                 -8.356808e-01  -3.3389321  1.6675706 0.9977647
+moving-credit_card                   9.500335e-01  -1.5532178  3.4532849 0.9922057
+other-credit_card                    5.525545e-01  -0.6114488  1.7165579 0.9473084
+renewable_energy-credit_card        -1.835681e+00 -10.9298376  7.2584761 0.9999917
+small_business-credit_card           3.578676e-01  -1.3862253  2.1019606 0.9999899
+vacation-credit_card                -6.134585e-01  -3.7009857  2.4740686 0.9999931
+wedding-credit_card                  8.739617e-02  -2.5046223  2.6794147 1.0000000
+educational-debt_consolidation      -1.232087e+00  -6.4825438  4.0183693 0.9999516
+home_improvement-debt_consolidation  5.627846e-01  -0.9335169  2.0590860 0.9928370
+house-debt_consolidation             1.315491e-01  -2.6273644  2.8904627 1.0000000
+major_purchase-debt_consolidation   -1.732087e+00  -3.7922040  0.3280295 0.2129684
+medical-debt_consolidation          -1.232087e+00  -3.6832138  1.2190394 0.9195873
+moving-debt_consolidation            5.536271e-01  -1.8974995  3.0047537 0.9999689
+other-debt_consolidation             1.561481e-01  -0.8910663  1.2033624 0.9999998
+renewable_energy-debt_consolidation -2.232087e+00 -11.3120345  6.8478601 0.9999177
+small_business-debt_consolidation   -3.853884e-02  -1.7069555  1.6298779 1.0000000
+vacation-debt_consolidation         -1.009865e+00  -4.0552842  2.0355542 0.9979118
+wedding-debt_consolidation          -3.090103e-01  -2.8507251  2.2327045 1.0000000
+home_improvement-educational         1.794872e+00  -3.6410984  7.2308420 0.9980006
+house-educational                    1.363636e+00  -4.5458863  7.2731590 0.9999602
+major_purchase-educational          -5.000000e-01  -6.1173780  5.1173780 1.0000000
+medical-educational                 -5.329071e-15  -5.7722505  5.7722505 1.0000000
+moving-educational                   1.785714e+00  -3.9865362  7.5579648 0.9989795
+other-educational                    1.388235e+00  -3.9416345  6.7181051 0.9998421
+renewable_energy-educational        -1.000000e+00 -11.4764640  9.4764640 1.0000000
+small_business-educational           1.193548e+00  -4.2922942  6.6793909 0.9999799
+vacation-educational                 2.222222e-01  -5.8263671  6.2708115 1.0000000
+wedding-educational                  9.230769e-01  -4.8882197  6.7343735 0.9999995
+house-home_improvement              -4.312354e-01  -3.5286669  2.6661961 0.9999999
+major_purchase-home_improvement     -2.294872e+00  -4.7901792  0.2004356 0.1097755
+medical-home_improvement            -1.794872e+00  -4.6216190  1.0318754 0.6773081
+moving-home_improvement             -9.157509e-03  -2.8359047  2.8175897 1.0000000
+other-home_improvement              -4.066365e-01  -2.1613832  1.3481102 0.9999582
+renewable_energy-home_improvement   -2.794872e+00 -11.9833385  6.3935949 0.9991459
+small_business-home_improvement     -6.013234e-01  -2.7844616  1.5818148 0.9997067
+vacation-home_improvement           -1.572650e+00  -4.9278032  1.7825041 0.9522046
+wedding-home_improvement            -8.717949e-01  -3.7774432  2.0338534 0.9992612
+major_purchase-house                -1.863636e+00  -5.2694028  1.5421301 0.8578108
+medical-house                       -1.363636e+00  -5.0192055  2.2919327 0.9933729
+moving-house                         4.220779e-01  -3.2334912  4.0776470 1.0000000
+other-house                          2.459893e-02  -2.8826028  2.9318006 1.0000000
+renewable_energy-house              -2.363636e+00 -11.8399546  7.1126818 0.9999030
+small_business-house                -1.700880e-01  -3.3542328  3.0140568 1.0000000
+vacation-house                      -1.141414e+00  -5.2193722  2.9365439 0.9996503
+wedding-house                       -4.405594e-01  -4.1574772  3.2763584 1.0000000
+medical-major_purchase               5.000000e-01  -2.6615918  3.6615918 0.9999996
+moving-major_purchase                2.285714e+00  -0.8758775  5.4473061 0.4588424
+other-major_purchase                 1.888235e+00  -0.3666037  4.1430743 0.2184995
+renewable_energy-major_purchase     -5.000000e-01  -9.7969395  8.7969395 1.0000000
+small_business-major_purchase        1.693548e+00  -0.9086152  4.2957120 0.6388149
+vacation-major_purchase              7.222222e-01  -2.9195108  4.3639552 0.9999933
+wedding-major_purchase               1.423077e+00  -1.8092528  4.6554066 0.9710779
+moving-medical                       1.785714e+00  -1.6435135  5.2149421 0.8971923
+other-medical                        1.388235e+00  -1.2286788  4.0051494 0.8835935
+renewable_energy-medical            -1.000000e+00 -10.3913271  8.3913271 1.0000000
+small_business-medical               1.193548e+00  -1.7279574  4.1150541 0.9847584
+vacation-medical                     2.222222e-01  -3.6541369  4.0985813 1.0000000
+wedding-medical                      9.230769e-01  -2.5714754  4.4176292 0.9998153
+other-moving                        -3.974790e-01  -3.0143931  2.2194351 0.9999997
+renewable_energy-moving             -2.785714e+00 -12.1770414  6.6056128 0.9993458
+small_business-moving               -5.921659e-01  -3.5136717  2.3293399 0.9999913
+vacation-moving                     -1.563492e+00  -5.4398511  2.3128670 0.9863987
+wedding-moving                      -8.626374e-01  -4.3571896  2.6319149 0.9999137
+renewable_energy-other              -2.388235e+00 -11.5143331  6.7378625 0.9998336
+small_business-other                -1.946869e-01  -2.0983235  1.7089497 1.0000000
+vacation-other                      -1.166013e+00  -4.3463898  2.0143636 0.9943793
+wedding-other                       -4.651584e-01  -3.1671080  2.2367913 0.9999988
+small_business-renewable_energy      2.193548e+00  -7.0245109 11.4116077 0.9999432
+vacation-renewable_energy            1.222222e+00  -8.3414372 10.7858816 1.0000000
+wedding-renewable_energy             1.923077e+00  -7.4922997 11.3384535 0.9999905
+vacation-small_business             -9.713262e-01  -4.4066940  2.4640417 0.9996096
+wedding-small_business              -2.704715e-01  -3.2683855  2.7274425 1.0000000
+wedding-vacation                     7.008547e-01  -3.2334117  4.6351211 0.9999981
+
+> 
+> #HiFICOLowInt # expected
+> lm3 <- aov(HiFICOLowInt$IntRatePrim ~ as.factor(HiFICOLowInt$Loan.Purpose))
+> TukeyHSD(lm3)
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = HiFICOLowInt$IntRatePrim ~ as.factor(HiFICOLowInt$Loan.Purpose))
+
+$`as.factor(HiFICOLowInt$Loan.Purpose)`
+                                             diff        lwr       upr     p adj
+credit_card-car                      9.461538e-01 -0.5270031 2.4193108 0.6586232
+debt_consolidation-car               1.154645e+00 -0.2348239 2.5441146 0.2288565
+educational-car                      3.173077e-01 -2.4550729 3.0896883 1.0000000
+home_improvement-car                 9.991259e-01 -0.5315015 2.5297533 0.6329538
+house-car                            4.065934e-01 -2.5132956 3.3264824 0.9999999
+major_purchase-car                   6.923077e-01 -0.9304737 2.3150890 0.9775931
+medical-car                         -5.934066e-01 -2.8665371 1.6797239 0.9998357
+moving-car                           9.923077e-01 -1.5592749 3.5438903 0.9901233
+other-car                            9.953380e-01 -0.5924055 2.5830815 0.6953479
+renewable_energy-car                 3.589744e-01 -3.8221854 4.5401341 1.0000000
+small_business-car                   1.015837e+00 -0.7706281 2.8023023 0.8194004
+vacation-car                         6.923077e-01 -1.7740889 3.1587043 0.9996342
+wedding-car                          8.798077e-01 -1.2990208 3.0586362 0.9861220
+debt_consolidation-credit_card       2.084915e-01 -0.4870878 0.9040708 0.9992590
+educational-credit_card             -6.288462e-01 -3.1267052 1.8690129 0.9998906
+home_improvement-credit_card         5.297203e-02 -0.8936145 0.9995585 1.0000000
+house-credit_card                   -5.395604e-01 -3.2001915 2.1210706 0.9999911
+major_purchase-credit_card          -2.538462e-01 -1.3431694 0.8354771 0.9999547
+medical-credit_card                 -1.539560e+00 -3.4683756 0.3892547 0.2894918
+moving-credit_card                   4.615385e-02 -2.2041305 2.2964382 1.0000000
+other-credit_card                    4.918415e-02 -0.9872207 1.0855890 1.0000000
+renewable_energy-credit_card        -5.871795e-01 -4.5915899 3.4172309 0.9999998
+small_business-credit_card           6.968326e-02 -1.2511739 1.3905404 1.0000000
+vacation-credit_card                -2.538462e-01 -2.4070572 1.8993649 1.0000000
+wedding-credit_card                 -6.634615e-02 -1.8830738 1.7503815 1.0000000
+educational-debt_consolidation      -8.373377e-01 -3.2867730 1.6120977 0.9971295
+home_improvement-debt_consolidation -1.555195e-01 -0.9657413 0.6547023 0.9999954
+house-debt_consolidation            -7.480519e-01 -3.3632749 1.8671710 0.9995512
+major_purchase-debt_consolidation   -4.623377e-01 -1.4355070 0.5108316 0.9465745
+medical-debt_consolidation          -1.748052e+00 -3.6137318 0.1176279 0.0934438
+moving-debt_consolidation           -1.623377e-01 -2.3587468 2.0340715 1.0000000
+other-debt_consolidation            -1.593074e-01 -1.0728546 0.7542399 0.9999985
+renewable_energy-debt_consolidation -7.956710e-01 -4.7700560 3.1787140 0.9999924
+small_business-debt_consolidation   -1.388083e-01 -1.3656322 1.0880157 1.0000000
+vacation-debt_consolidation         -4.623377e-01 -2.5591808 1.6345055 0.9999761
+wedding-debt_consolidation          -2.748377e-01 -2.0243898 1.4747145 0.9999996
+home_improvement-educational         6.818182e-01 -1.8503605 3.2139969 0.9997682
+house-educational                    8.928571e-02 -3.4596381 3.6382095 1.0000000
+major_purchase-educational           3.750000e-01 -2.2139241 2.9639241 0.9999999
+medical-educational                 -9.107143e-01 -3.9498311 2.1284025 0.9992610
+moving-educational                   6.750000e-01 -2.5776424 3.9276424 0.9999883
+other-educational                    6.780303e-01 -1.8890766 3.2451372 0.9998128
+renewable_energy-educational         4.166667e-02 -4.6006609 4.6839943 1.0000000
+small_business-educational           6.985294e-01 -1.9960144 3.3930733 0.9998480
+vacation-educational                 3.750000e-01 -2.8112550 3.5612550 1.0000000
+wedding-educational                  5.625000e-01 -2.4067427 3.5317427 0.9999960
+house-home_improvement              -5.925325e-01 -3.2854094 2.1003445 0.9999767
+major_purchase-home_improvement     -3.068182e-01 -1.4726886 0.8590523 0.9998202
+medical-home_improvement            -1.592532e+00 -3.5655902 0.3805253 0.2720761
+moving-home_improvement             -6.818182e-03 -2.2951382 2.2815019 1.0000000
+other-home_improvement              -3.787879e-03 -1.1203737 1.1127980 1.0000000
+renewable_energy-home_improvement   -6.401515e-01 -4.6660590 3.3857560 0.9999995
+small_business-home_improvement      1.671123e-02 -1.3679521 1.4013745 1.0000000
+vacation-home_improvement           -3.068182e-01 -2.4997493 1.8861129 0.9999999
+wedding-home_improvement            -1.193182e-01 -1.9829512 1.7443149 1.0000000
+major_purchase-house                 2.857143e-01 -2.4605897 3.0320182 1.0000000
+medical-house                       -1.000000e+00 -4.1742540 2.1742540 0.9987502
+moving-house                         5.857143e-01 -2.7935371 3.9649657 0.9999987
+other-house                          5.887446e-01 -2.1370022 3.3144914 0.9999812
+renewable_energy-house              -4.761905e-02 -4.7795175 4.6842794 1.0000000
+small_business-house                 6.092437e-01 -2.2368455 3.4553329 0.9999831
+vacation-house                       2.857143e-01 -3.0296859 3.6011144 1.0000000
+wedding-house                        4.732143e-01 -2.6342058 3.5806344 0.9999997
+medical-major_purchase              -1.285714e+00 -3.3310886 0.7596600 0.6913302
+moving-major_purchase                3.000000e-01 -2.0509589 2.6509589 1.0000000
+other-major_purchase                 3.030303e-01 -0.9368742 1.5429348 0.9999218
+renewable_energy-major_purchase     -3.333333e-01 -4.3951717 3.7285050 1.0000000
+small_business-major_purchase        3.235294e-01 -1.1623682 1.8094270 0.9999794
+vacation-major_purchase              3.552714e-15 -2.2582174 2.2582174 1.0000000
+wedding-major_purchase               1.875000e-01 -1.7525328 2.1275328 1.0000000
+moving-medical                       1.585714e+00 -1.2534248 4.4248534 0.8377577
+other-medical                        1.588745e+00 -0.4289437 3.6064329 0.3113086
+renewable_energy-medical             9.523810e-01 -3.4102139 5.3149758 0.9999788
+small_business-medical               1.609244e+00 -0.5682766 3.7867640 0.4191768
+vacation-medical                     1.285714e+00 -1.4771192 4.0485477 0.9544500
+wedding-medical                      1.473214e+00 -1.0362538 3.9826824 0.7832922
+other-moving                         3.030303e-03 -2.3238813 2.3299419 1.0000000
+renewable_energy-moving             -6.333333e-01 -5.1472768 3.8806101 0.9999999
+small_business-moving                2.352941e-02 -2.4432592 2.4903181 1.0000000
+vacation-moving                     -3.000000e-01 -3.2961142 2.6961142 1.0000000
+wedding-moving                      -1.125000e-01 -2.8767145 2.6517145 1.0000000
+renewable_energy-other              -6.363636e-01 -4.6843311 3.4116038 0.9999996
+small_business-other                 2.049911e-02 -1.4270511 1.4680493 1.0000000
+vacation-other                      -3.030303e-01 -2.5362020 1.9301414 0.9999999
+wedding-other                       -1.155303e-01 -2.0263514 1.7952908 1.0000000
+small_business-renewable_energy      6.568627e-01 -3.4730972 4.7868227 0.9999995
+vacation-renewable_energy            3.333333e-01 -4.1330101 4.7996767 1.0000000
+wedding-renewable_energy             5.208333e-01 -3.7933763 4.8350430 1.0000000
+vacation-small_business             -3.235294e-01 -2.7020971 2.0550383 0.9999999
+wedding-small_business              -1.360294e-01 -2.2149151 1.9428563 1.0000000
+wedding-vacation                     1.875000e-01 -2.4982811 2.8732811 1.0000000
+
+> 
+> #HiFICOHiInt # counter intuitive re: FICO and interest rates
+> lm4 <- aov(HiFICOHiInt$IntRatePrim ~ as.factor(HiFICOHiInt$Loan.Purpose))
+> TukeyHSD(lm4)
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = HiFICOHiInt$IntRatePrim ~ as.factor(HiFICOHiInt$Loan.Purpose))
+
+$`as.factor(HiFICOHiInt$Loan.Purpose)`
+                                             diff        lwr       upr     p adj
+credit_card-car                      1.210526e+00  -3.387939  5.808991 0.9995912
+debt_consolidation-car               1.683673e+00  -2.734747  6.102094 0.9868051
+educational-car                     -1.421085e-14  -7.576012  7.576012 1.0000000
+home_improvement-car                 1.571429e+00  -3.388236  6.531093 0.9974750
+house-car                           -1.065814e-14  -7.576012  7.576012 1.0000000
+major_purchase-car                   9.000000e-01  -3.891491  5.691491 0.9999888
+medical-car                          2.500000e+00  -3.685788  8.685788 0.9785558
+moving-car                           1.000000e+00  -6.576012  8.576012 0.9999998
+other-car                            1.437500e+00  -3.201841  6.076841 0.9979567
+small_business-car                   2.250000e+00  -2.474474  6.974474 0.9269030
+vacation-car                        -1.953993e-14  -7.576012  7.576012 1.0000000
+wedding-car                          2.000000e+00  -4.185788  8.185788 0.9969466
+debt_consolidation-credit_card       4.731472e-01  -1.077447  2.023741 0.9982354
+educational-credit_card             -1.210526e+00  -7.557011  5.135958 0.9999867
+home_improvement-credit_card         3.609023e-01  -2.374089  3.095893 0.9999998
+house-credit_card                   -1.210526e+00  -7.557011  5.135958 0.9999867
+major_purchase-credit_card          -3.105263e-01  -2.727196  2.106143 0.9999998
+medical-credit_card                  1.289474e+00  -3.308991  5.887939 0.9992278
+moving-credit_card                  -2.105263e-01  -6.557011  6.135958 1.0000000
+other-credit_card                    2.269737e-01  -1.871929  2.325876 1.0000000
+small_business-credit_card           1.039474e+00  -1.241438  3.320385 0.9463348
+vacation-credit_card                -1.210526e+00  -7.557011  5.135958 0.9999867
+wedding-credit_card                  7.894737e-01  -3.808991  5.387939 0.9999959
+educational-debt_consolidation      -1.683673e+00  -7.900942  4.533595 0.9994554
+home_improvement-debt_consolidation -1.122449e-01  -2.532313  2.307823 1.0000000
+house-debt_consolidation            -1.683673e+00  -7.900942  4.533595 0.9994554
+major_purchase-debt_consolidation   -7.836735e-01  -2.837170  1.269823 0.9866373
+medical-debt_consolidation           8.163265e-01  -3.602094  5.234747 0.9999907
+moving-debt_consolidation           -6.836735e-01  -6.900942  5.533595 1.0000000
+other-debt_consolidation            -2.461735e-01  -1.914090  1.421744 0.9999993
+small_business-debt_consolidation    5.663265e-01  -1.325528  2.458181 0.9985331
+vacation-debt_consolidation         -1.683673e+00  -7.900942  4.533595 0.9994554
+wedding-debt_consolidation           3.163265e-01  -4.102094  4.734747 1.0000000
+home_improvement-educational         1.571429e+00  -5.041457  8.184314 0.9998582
+house-educational                    3.552714e-15  -8.748025  8.748025 1.0000000
+major_purchase-educational           9.000000e-01  -5.587709  7.387709 0.9999996
+medical-educational                  2.500000e+00  -5.076012 10.076012 0.9963091
+moving-educational                   1.000000e+00  -7.748025  9.748025 1.0000000
+other-educational                    1.437500e+00  -4.938664  7.813664 0.9999187
+small_business-educational           2.250000e+00  -4.188372  8.688372 0.9937829
+vacation-educational                -5.329071e-15  -8.748025  8.748025 1.0000000
+wedding-educational                  2.000000e+00  -5.576012  9.576012 0.9995792
+house-home_improvement              -1.571429e+00  -8.184314  5.041457 0.9998582
+major_purchase-home_improvement     -6.714286e-01  -3.719818  2.376961 0.9999366
+medical-home_improvement             9.285714e-01  -4.031093  5.888236 0.9999892
+moving-home_improvement             -5.714286e-01  -7.184314  6.041457 1.0000000
+other-home_improvement              -1.339286e-01  -2.937102  2.669245 1.0000000
+small_business-home_improvement      6.785714e-01  -2.263358  3.620500 0.9998964
+vacation-home_improvement           -1.571429e+00  -8.184314  5.041457 0.9998582
+wedding-home_improvement             4.285714e-01  -4.531093  5.388236 1.0000000
+major_purchase-house                 9.000000e-01  -5.587709  7.387709 0.9999996
+medical-house                        2.500000e+00  -5.076012 10.076012 0.9963091
+moving-house                         1.000000e+00  -7.748025  9.748025 1.0000000
+other-house                          1.437500e+00  -4.938664  7.813664 0.9999187
+small_business-house                 2.250000e+00  -4.188372  8.688372 0.9937829
+vacation-house                      -8.881784e-15  -8.748025  8.748025 1.0000000
+wedding-house                        2.000000e+00  -5.576012  9.576012 0.9995792
+medical-major_purchase               1.600000e+00  -3.191491  6.391491 0.9958833
+moving-major_purchase                1.000000e-01  -6.387709  6.587709 1.0000000
+other-major_purchase                 5.375000e-01  -1.956071  3.031071 0.9999497
+small_business-major_purchase        1.350000e+00  -1.298596  3.998596 0.8859138
+vacation-major_purchase             -9.000000e-01  -7.387709  5.587709 0.9999996
+wedding-major_purchase               1.100000e+00  -3.691491  5.891491 0.9999014
+moving-medical                      -1.500000e+00  -9.076012  6.076012 0.9999800
+other-medical                       -1.062500e+00  -5.701841  3.576841 0.9999039
+small_business-medical              -2.500000e-01  -4.974474  4.474474 1.0000000
+vacation-medical                    -2.500000e+00 -10.076012  5.076012 0.9963091
+wedding-medical                     -5.000000e-01  -6.685788  5.685788 1.0000000
+other-moving                         4.375000e-01  -5.938664  6.813664 1.0000000
+small_business-moving                1.250000e+00  -5.188372  7.688372 0.9999839
+vacation-moving                     -1.000000e+00  -9.748025  7.748025 1.0000000
+wedding-moving                       1.000000e+00  -6.576012  8.576012 0.9999998
+small_business-other                 8.125000e-01  -1.549737  3.174737 0.9946106
+vacation-other                      -1.437500e+00  -7.813664  4.938664 0.9999187
+wedding-other                        5.625000e-01  -4.076841  5.201841 0.9999999
+vacation-small_business             -2.250000e+00  -8.688372  4.188372 0.9937829
+wedding-small_business              -2.500000e-01  -4.974474  4.474474 1.0000000
+wedding-vacation                     2.000000e+00  -5.576012  9.576012 0.9995792
+
+> 
+> #LowFICOLowInt # counter intuitive re: FICO and interest rates
+> lm5 <- aov(LowFICOLowInt$IntRatePrim ~ as.factor(LowFICOLowInt$Loan.Purpose))
+> TukeyHSD(lm5)
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = LowFICOLowInt$IntRatePrim ~ as.factor(LowFICOLowInt$Loan.Purpose))
+
+$`as.factor(LowFICOLowInt$Loan.Purpose)`
+                                             diff        lwr       upr     p adj
+credit_card-car                      8.536585e-02 -2.1253549 2.2960866 1.0000000
+debt_consolidation-car               4.725275e-01 -1.7097621 2.6548170 0.9997969
+educational-car                      1.500000e+00 -1.7974634 4.7974634 0.9274972
+home_improvement-car                 3.333333e-01 -2.0531955 2.7198621 0.9999966
+house-car                            1.500000e+00 -3.3269922 6.3269922 0.9954351
+major_purchase-car                   7.857143e-01 -1.6620175 3.2334461 0.9940765
+moving-car                           1.000000e+00 -2.0528579 4.0528579 0.9930441
+other-car                            5.588235e-01 -1.7233251 2.8409722 0.9993920
+small_business-car                  -3.000000e-01 -2.8542042 2.2542042 0.9999994
+wedding-car                          5.000000e-01 -2.1438525 3.1438525 0.9999412
+debt_consolidation-credit_card       3.871616e-01 -0.1870618 0.9613851 0.5173277
+educational-credit_card              1.414634e+00 -1.1232015 3.9524698 0.7759152
+home_improvement-credit_card         2.479675e-01 -0.8758050 1.3717400 0.9997592
+house-credit_card                    1.414634e+00 -2.9290047 5.7582730 0.9933540
+major_purchase-credit_card           7.003484e-01 -0.5481450 1.9488419 0.7690333
+moving-credit_card                   9.146341e-01 -1.2960866 3.1253549 0.9609825
+other-credit_card                    4.734577e-01 -0.4071941 1.3541094 0.8126141
+small_business-credit_card          -3.853659e-01 -1.8315000 1.0607683 0.9987333
+wedding-credit_card                  4.146341e-01 -1.1845222 2.0137905 0.9989991
+educational-debt_consolidation       1.027473e+00 -1.4856353 3.5405804 0.9640244
+home_improvement-debt_consolidation -1.391941e-01 -1.2059490 0.9275607 0.9999983
+house-debt_consolidation             1.027473e+00 -3.3017652 5.3567103 0.9995384
+major_purchase-debt_consolidation    3.131868e-01 -0.8842426 1.5106162 0.9989211
+moving-debt_consolidation            5.274725e-01 -1.6548170 2.7097621 0.9994576
+other-debt_consolidation             8.629606e-02 -0.7203320 0.8929241 0.9999997
+small_business-debt_consolidation   -7.725275e-01 -2.1748132 0.6297582 0.7883345
+wedding-debt_consolidation           2.747253e-02 -1.5321435 1.5870886 1.0000000
+home_improvement-educational        -1.166667e+00 -3.8590343 1.5257009 0.9468594
+house-educational                   -1.776357e-15 -4.9852961 4.9852961 1.0000000
+major_purchase-educational          -7.142857e-01 -3.4610501 2.0324786 0.9989734
+moving-educational                  -5.000000e-01 -3.7974634 2.7974634 0.9999926
+other-educational                   -9.411765e-01 -3.5414699 1.6591170 0.9850069
+small_business-educational          -1.800000e+00 -4.6420560 1.0420560 0.6123025
+wedding-educational                 -1.000000e+00 -3.9228889 1.9228889 0.9902292
+house-home_improvement               1.166667e+00 -3.2690330 5.6023664 0.9988678
+major_purchase-home_improvement      4.523810e-01 -1.0861148 1.9908767 0.9970966
+moving-home_improvement              6.666667e-01 -1.7198621 3.0531955 0.9981085
+other-home_improvement               2.254902e-01 -1.0329934 1.4839738 0.9999644
+small_business-home_improvement     -6.333333e-01 -2.3361361 1.0694694 0.9816540
+wedding-home_improvement             1.666667e-01 -1.6678726 2.0012059 0.9999999
+major_purchase-house                -7.142857e-01 -5.1832121 3.7546407 0.9999878
+moving-house                        -5.000000e-01 -5.3269922 4.3269922 0.9999998
+other-house                         -9.411765e-01 -5.3216005 3.4392475 0.9998106
+small_business-house                -1.800000e+00 -6.3281200 2.7281200 0.9704046
+wedding-house                       -1.000000e+00 -5.5792869 3.5792869 0.9997807
+moving-major_purchase                2.142857e-01 -2.2334461 2.6620175 1.0000000
+other-major_purchase                -2.268908e-01 -1.5978948 1.1441133 0.9999831
+small_business-major_purchase       -1.085714e+00 -2.8732848 0.7018563 0.6712949
+wedding-major_purchase              -2.857143e-01 -2.1991942 1.6277657 0.9999936
+other-moving                        -4.411765e-01 -2.7233251 1.8409722 0.9999279
+small_business-moving               -1.300000e+00 -3.8542042 1.2542042 0.8597416
+wedding-moving                      -5.000000e-01 -3.1438525 2.1438525 0.9999412
+small_business-other                -8.588235e-01 -2.4119559 0.6943088 0.7844482
+wedding-other                       -5.882353e-02 -1.7553545 1.6377074 1.0000000
+wedding-small_business               8.000000e-01 -1.2479193 2.8479193 0.9738376
